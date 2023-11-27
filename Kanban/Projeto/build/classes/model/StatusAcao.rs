@@ -1,0 +1,2 @@
+model.StatusAcao
+model.Acao
