@@ -318,6 +318,13 @@ public class Menu {
         }
     }
     
+    private void listarUsuariosCadastrados(){
+        System.out.println("Lista de Usuarios Cadastrados: ");
+        for (Usuario usuario : listaDeUsuarios) {
+            System.out.println(usuario.getNome());
+        }
+    }
+    
     private void listarAtividadesAoCriarAcao() {
     System.out.println("Lista de Projetos Cadastrados: ");
     
@@ -427,9 +434,28 @@ public class Menu {
     }
 
     private Atividades escolherAtividade(Projeto projeto) {
+        Scanner scanner = new Scanner(System.in);
+        
+        List<Atividades> atividades = projeto.getAtividades();
+        
+        for (int i = 0; i < atividades.size(); i++) {
+            System.out.println((i + 1) + ". " + atividades.get(i).getNome());
+        }
+        
+        System.out.print("Digite o nome da atividade desejada: ");
+        String nomeAtividadeEscolhida = scanner.nextLine();
+        
+        for (Atividades atividade : atividades) {
+            if (atividade.getNome().equals(nomeAtividadeEscolhida)) {
+                return atividade;
+            }
+        }
+        
+        System.out.println("Atividade não encontrada. Tente novamente.");
+        return null;
         
         
-        System.out.print("Digite o nome da atividade: ");
+        /*System.out.print("Digite o nome da atividade: ");
         String nomeAtividade = scanner.nextLine();
         for (Atividades atividade : projeto.getAtividades()) {
             if (atividade.getDescricao().equals(nomeAtividade)) {
@@ -437,27 +463,29 @@ public class Menu {
             }
         }
         System.out.println("Atividade não encontrada. Cadastre a atividade primeiro.");
-        return null;
+        return null;*/
     }
 
     private void cadastrarAcao() {
         Projeto projeto = escolherProjeto();
-        //List<Projeto> emp = emp.getProjetos();
         
-        //System.out.println(emp.toString());
         if (projeto != null) {
-            //listarAtividadesAoCriarAcao();
+            
             
             Atividades atividade = escolherAtividade(projeto);
             
             if (atividade != null) {
+                
+                
                 System.out.print("Digite o nome da ação: ");
-                String nomeAcao = scanner.nextLine();              
+                String nomeAcao = scanner.nextLine();
+                
+                listarAreasDisponiveis();
               
                 System.out.print("Digite a área responsável: ");
                 String areaResponsavel = scanner.nextLine();
 
-                // Solicitar o nome do usuário responsável
+                listarUsuariosCadastrados();
                 
                 System.out.print("Digite o nome do usuário responsável pela ação: ");
                 String usuarioResponsavel = scanner.nextLine();
