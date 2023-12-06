@@ -30,25 +30,7 @@ public class Menu {
     List<Usuario> listaDeUsuarios = new ArrayList<>();
     private Map<String, Atividades> atividadesCadastradas;
     
-    private Date obterData(String mensagem){
-        while(true){
-            try{
-                System.out.println(mensagem);
-                System.out.println("Formato correto dd/MM/yyyy");
-                
-                //obter data de inicio
-                System.out.println("Data inicial do Projeto");
-                String dataInicioProjeto = scanner.nextLine();
-                
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                return dateFormat.parse(dataInicioProjeto);
-                
-                
-            }catch(ParseException e){
-                System.out.println("Formato de data incorreto. Tente novamente.");
-            }
-        }
-    }
+    
 
     public Menu() {
         this.scanner = new Scanner(System.in);
@@ -360,6 +342,25 @@ public class Menu {
         System.out.println("Projeto não encontrado.");
     }
 }
+    
+    private Date obterData(String mensagem){
+        while(true){
+            try{
+                System.out.println(mensagem + ": ");
+                String dataStr = scanner.nextLine();
+                
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                return dateFormat.parse(dataStr);
+                           
+                
+                
+            }catch(ParseException e){
+                System.out.println("Formato de data incorreto. Tente novamente.");
+            } catch (IllegalArgumentException e) {
+                System.out.println("Erro no formato de data. Tente novamente.");
+            }
+        }
+    }
 
 
     private void cadastrarProjeto() throws ParseException {
@@ -368,9 +369,11 @@ public class Menu {
         System.out.print("Digite a descrição do projeto: ");
         String descricao = scanner.nextLine();
         
+        System.out.println("Digite a data de inicio do Projeto");
+        Date dataInicioProjeto = obterData("Formato correto dd/MM/yyyy");
         
-        Date dataInicioProjeto = obterData("Digite a data de inicio do Projeto");
-        Date dataFimProjeto = obterData("Digite a data final do Projeto");
+        System.out.println("Digite a data final do Projeto");
+        Date dataFimProjeto = obterData("Formato correto dd/MM/yyyy");
 
         Projeto projeto = new Projeto(nomeProjeto, descricao, dataInicioProjeto, dataFimProjeto);
         listarAreasDisponiveis();
@@ -502,18 +505,20 @@ public class Menu {
                     String dataTerminoStr = scanner.nextLine();
                     Date dataTermino = dateFormat.parse(dataTerminoStr);
                     
+                    //Usuario usuario = new Usuario(usuarioResponsavel, funcaoUsuario, dataEntrada);
+                    
+                    
                     System.out.println("Digite a Funcao do usuário: ");
                     String funcaoUsuario = scanner.nextLine();
                     
                     
-
-                    // Cria o usuário associado à ação
-                    //Usuario usuario = new Usuario(usuarioResponsavel, funcaoUsuario, dataEntrada);
-
                     // Cria a ação e associa o mesmo usuário como responsável e associado
                     Acao acao = new Acao(nomeAcao, dataInicio, dataTermino, areaResponsavel, usuarioResponsavel);
                     
-                    //Usuario usuario = this.listaDeUsuarios.get(0);
+                    
+                    //alterado_aqui01
+                    
+                    Usuario usuario = this.listaDeUsuarios.get(0);
 
                     // Adiciona a ação à atividade
                     atividade.adicionarAcao(acao);
@@ -563,28 +568,32 @@ public class Menu {
     }
 
     private void visualizarQuadroKanban() {
-        System.out.println("==== Quadro Kanban ====");
+    System.out.println("==== Quadro Kanban ====");
 
-        for (Projeto projeto : empresa.getProjetos()) {
-            System.out.println("Projeto: " + projeto.getNome());
+    System.out.printf("%-20s | %-15s | %-15s | %-12s | %-10s | %-12s | %-12s | %-15s%n",
+            "Projeto", "Atividade", "Ação", "Status", "Progresso", "Data Início", "Data Término", "Usuário Responsável");
 
-            for (Atividades atividade : projeto.getAtividades()) {
-                System.out.println("\nAtividade: " + atividade.getDescricao());
-
-                for (Acao acao : atividade.getAcoes()) {
-                    System.out.println("\t\tAção: " + acao.getNome());
-                    System.out.println("\t\t\tStatus: " + acao.getStatus());
-                    System.out.println("\t\t\tProgresso: " + acao.progresso() + "%");
-                    System.out.println("\t\t\tData de Início: " + acao.getDataInicio());
-                    System.out.println("\t\t\tData de Término: " + acao.getDataFim());
-                    System.out.println("\t\t\tÁrea Responsável: " + acao.getAreaResponsavel());
-                    System.out.println("\t\t\tUsuário Responsável: " + acao.getUsuarioResponsavel());
-                }
+    for (Projeto projeto : empresa.getProjetos()) {
+        for (Atividades atividade : projeto.getAtividades()) {
+            for (Acao acao : atividade.getAcoes()) {
+                System.out.printf("%-20s | %-15s | %-15s | %-12s | %-10s | %-12s | %-12s | %-15s%n",
+                        projeto.getNome(), atividade.getDescricao(), acao.getNome(),
+                        acao.getStatus(), acao.progresso() + "%", formatarData(acao.getDataInicio()), formatarData(acao.getDataFim()),
+                        acao.getUsuarioResponsavel());
             }
         }
-
-        System.out.println("======================");
     }
+
+    System.out.println("======================");
+}
+
+private String formatarData(Date data) {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    return dateFormat.format(data);
+}
+
+
+
 
     public static void main(String[] args) throws ParseException {
         Menu menu = new Menu();
